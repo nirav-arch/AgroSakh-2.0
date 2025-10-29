@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6b8e23">
+    <title>एग्रोसखा - किसान सेवा ऐप</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #6b8e23;
+            --primary-dark: #5a7a1e;
+            --secondary: #d4a574;
+            --bg: #f8f6f0;
+            --text: #2c2c2c;
+            --text-light: #666;
+            --border: #e0dfd5;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 18px;
+            line-height: 1.6;
+            padding-bottom: 70px;
+            overflow-x: hidden;
+        }
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 90px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Login/Signup */
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            font-size: 80px;
+            margin-bottom: 16px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .logo-subtitle {
+            font-size: 16px;
+            color: var(--text-light);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(107, 142, 35, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+            color: var(--text-light);
+        }
+
+        .toggle-link button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: inherit;
+        }
+
+        /* Dashboard */
+        .welcome {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .welcome-text {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .welcome-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+        }
+
+        .feature-card:active {
+            transform: scale(0.95);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .feature-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+            z-index: 99;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 20px;
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            color: var(--text-light);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Weather */
+        .weather-current {
+            background: linear-gradient(135deg, #4da6ff, #2196f3);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .weather-temp {
+            font-size: 56px;
+            font-weight: bold;
+            margin: 16px 0;
+        }
+
+        .weather-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .forecast-day {
+            background: white;
+            padding: 16px 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .forecast-date {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .forecast-icon {
+            font-size: 32px;
+            margin: 8px 0;
+        }
+
+        .farming-tips {
+            background: #e8f5e9;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 4px solid var(--success);
+        }
+
+        .farming-tips h4 {
+            color: var(--success);
+            margin-bottom: 12px;
+        }
+
+        /* Disease Detection */
+        .detection-type {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .type-option {
+            background: white;
+            border: 2px solid var(--border);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .type-option.selected {
+            border-color: var(--primary);
+            background: rgba(107, 142, 35, 0.05);
+        }
+
+        .type-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .crop-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .crop-option {
+            background: white;
+            border: 2px solid var(--border);
+            padding: 12px 8px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .crop-option.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .upload-area {
+            background: white;
+            border: 3px dashed var(--border);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:active {
+            border-color: var(--primary);
+            background: rgba(107, 142, 35, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .result-card {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--success);
+        }
+
+        .result-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .result-card.danger {
+            border-left-color: var(--danger);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .result-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .confidence {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #8bc34a);
+            border-radius: 4px;
+        }
+
+        .treatment {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        /* Market Prices */
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .price-item {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price-crop {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .price-mandi {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .price-value {
+            text-align: right;
+        }
+
+        .price-amount {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .price-trend {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        .disclaimer {
+            background: #fff3cd;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #856404;
+            border-left: 4px solid var(--warning);
+        }
+
+        /* Government Schemes */
+        .scheme-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .scheme-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .scheme-desc {
+            font-size: 15px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .scheme-btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Community */
+        .post-input-area {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .post-input {
+            width: 100%;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: none;
+            margin-bottom: 12px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .post {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .post-author {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .post-meta {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .post-content {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .post-actions-bar {
+            display: flex;
+            gap: 20px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 15px;
+            color: var(--text-light);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .action-btn.liked {
+            color: var(--danger);
+        }
+
+        /* Offline Banner */
+        .offline-banner {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 20px;
+            right: 20px;
+            background: var(--warning);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 98;
+            animation: slideDown 0.3s ease;
+        }
+
+        .offline-banner.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* Profile Edit */
+        .profile-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            background: var(--border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chip-remove {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--danger);
+        }
+
+        .add-chip-input {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .add-chip-input input {
+            flex: 1;
+        }
+
+        .btn-small {
+            padding: 10px 16px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        /* Utilities */
+        .mb-16 { margin-bottom: 16px; }
+        .mb-20 { margin-bottom: 20px; }
+        .text-center { text-align: center; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-title" id="headerTitle">एग्रोसखा</div>
+        <div class="header-actions">
+            <button class="icon-btn" id="notificationBtn" onclick="openNotifications()">
+                🔔
+                <span class="badge" id="notifBadge">3</span>
+            </button>
+            <button class="icon-btn" id="langBtn" onclick="toggleLanguage()">EN</button>
+        </div>
+    </div>
+
+    <!-- Offline Banner -->
+    <div class="offline-banner" id="offlineBanner">
+        ⚠️ आप ऑफलाइन हैं
+    </div>
+
+    <!-- Login Screen -->
+    <div class="screen active" id="loginScreen">
+        <div class="auth-container">
+            <div class="logo">
+                <div class="logo-icon">🌾</div>
+                <div class="logo-text">एग्रोसखा</div>
+                <div class="logo-subtitle">किसान सेवा प्लेटफॉर्म</div>
+            </div>
+
+            <div id="loginForm">
+                <div class="form-group">
+                    <label>मोबाइल नंबर</label>
+                    <input type="tel" id="loginMobile" placeholder="10 अंक" maxlength="10">
+                </div>
+                <div class="form-group">
+                    <label>पासवर्ड</label>
+                    <input type="password" id="loginPassword" placeholder="पासवर्ड दर्ज करें">
+                </div>
+                <button class="btn btn-primary" onclick="login()">लॉगिन करें</button>
+                <div class="toggle-link">
+                    खाता नहीं है? <button onclick="showSignup()">साइन अप करें</button>
+                </div>
+            </div>
+
+            <div id="signupForm" style="display: none;">
+                <div class="form-group">
+                    <label>नाम</label>
+                    <input type="text" id="signupName" placeholder="पूरा नाम">
+                </div>
+                <div class="form-group">
+                    <label>गाँव</label>
+                    <select id="signupVillage">
+                        <option value="">चुनें...</option>
+                        <option value="Timarni">Timarni</option>
+                        <option value="Harda">Harda</option>
+                        <option value="Khirkiya">Khirkiya</option>
+                        <option value="Handiya">Handiya</option>
+                        <option value="Sirali">Sirali</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>मोबाइल नंबर</label>
+                    <input type="tel" id="signupMobile" placeholder="10 अंक" maxlength="10">
+                </div>
+                <div class="form-group">
+                    <label>पासवर्ड</label>
+                    <input type="password" id="signupPassword" placeholder="पासवर्ड बनाएं">
+                </div>
+                <button class="btn btn-primary" onclick="signup()">खाता बनाएं</button>
+                <div class="toggle-link">
+                    पहले से खाता है? <button onclick="showLogin()">लॉगिन करें</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div class="screen" id="dashboardScreen">
+        <div class="welcome">
+            <div class="welcome-text">स्वागत है</div>
+            <div class="welcome-name" id="userName">किसान</div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card" onclick="showScreen('weatherScreen')">
+                <div class="feature-icon">🌤️</div>
+                <div class="feature-name">मौसम</div>
+            </div>
+            <div class="feature-card" onclick="showScreen('diseaseScreen')">
+                <div class="feature-icon">🔬</div>
+                <div class="feature-name">रोग पहचान</div>
+            </div>
+            <div class="feature-card" onclick="showScreen('marketScreen')">
+                <div class="feature-icon">📊</div>
+                <div class="feature-name">मंडी भाव</div>
+            </div>
+            <div class="feature-card" onclick="showScreen('schemesScreen')">
+                <div class="feature-icon">🏛️</div>
+                <div class="feature-name">सरकारी योजनाएं</div>
+            </div>
+            <div class="feature-card" onclick="showScreen('communityScreen')">
+                <div class="feature-icon">👥</div>
+                <div class="feature-name">समुदाय</div>
+            </div>
+            <div class="feature-card" onclick="showScreen('profileScreen')">
+                <div class="feature-icon">👨‍🌾</div>
+                <div class="feature-name">मेरा खेत</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Screen -->
+    <div class="screen" id="weatherScreen">
+        <div class="weather-current">
+            <div style="font-size: 20px;">Harda, MP</div>
+            <div class="weather-temp">28°C</div>
+            <div style="font-size: 18px;">⛅ आंशिक बादल</div>
+            <div style="margin-top: 12px; font-size: 14px;">सूर्योदय: 6:15 AM | सूर्यास्त: 6:45 PM</div>
+        </div>
+
+        <div class="weather-metrics">
+            <div class="metric-card">
+                <div class="metric-value">65%</div>
+                <div class="metric-label">आर्द्रता</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">12 km/h</div>
+                <div class="metric-label">हवा</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">30%</div>
+                <div class="metric-label">बारिश</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">1013 mb</div>
+                <div class="metric-label">दबाव</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">UV 6</div>
+                <div class="metric-label">UV इंडेक्स</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">10 km</div>
+                <div class="metric-label">दृश्यता</div>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 16px;">7 दिन का पूर्वानुमान</h3>
+        <div class="forecast-grid">
+            <div class="forecast-day">
+                <div class="forecast-date">सोम</div>
+                <div class="forecast-icon">☀️</div>
+                <div>29°C</div>
+                <div style="font-size: 12px; color: var(--text-light);">बारिश: 10%</div>
+            </div>
+            <div class="forecast-day">
+                <div class="forecast-date">मंगल</div>
+                <div class="forecast-icon">🌧️</div>
+                <div>27°C</div>
+                <div style="font-size: 12px; color: var(--text-light);">बारिश: 80%</div>
+            </div>
+            <div class="forecast-day">
+                <div class="forecast-date">बुध</div>
+                <div class="forecast-icon">⛅</div>
+                <div>26°C</div>
+                <div style="font-size: 12px; color: var(--text-light);">बारिश: 40%</div>
+            </div>
+            <div class="forecast-day">
+                <div class="forecast-date">गुरु</div>
+                <div class="forecast-icon">☀️</div>
+                <div>28°C</div>
+                <div style="font-size: 12px; color: var(--text-light);">बारिश: 5%</div>
+            </div>
+            <div class="forecast-day">
+                <div class="forecast-date">शुक्र</div>
+                <div class="forecast-icon">🌤️</div>
+                <div>29°C</div>
+                <div style="font-size: 12px; color: var(--text-light);">बारिश: 15%</div>
+            </div>
+            <div class="forecast-day">
+                <div class="forecast-date">शनि</div>
+                <div class="forecast-icon">☀️</div>
+                <div>30°C</div>
+                <div style="font-size: 12px; color: var(--text-light);">बारिश: 5%</div>
+            </div>
+        </div>
+
+        <div class="farming-tips">
+            <h4>🌾 खेती के लिए सुझाव</h4>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>स्प्रे करने का सही समय:</strong> सुबह 6-10 बजे या शाम 4-7 बजे (हवा कम हो)</li>
+                <li><strong>सिंचाई:</strong> अगले 24 घंटे में बारिश की संभावना नहीं, सिंचाई कर सकते हैं</li>
+                <li><strong>UV सुरक्षा:</strong> UV इंडेक्स मध्यम है, दोपहर 12-3 बजे सीधी धूप से बचें</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Disease Detection Screen -->
+    <div class="screen" id="diseaseScreen">
+        <h3 class="mb-16">पहचान का प्रकार चुनें</h3>
+        <div class="detection-type">
+            <div class="type-option selected" onclick="selectDetectionType('disease')">
+                <div class="type-icon">🌱</div>
+                <div style="font-weight: 600;">पौधे की बीमारी</div>
+            </div>
+            <div class="type-option" onclick="selectDetectionType('pest')">
+                <div class="type-icon">🐛</div>
+                <div style="font-weight: 600;">कीट/पतंगे</div>
+            </div>
+        </div>
+
+        <h3 class="mb-16">फसल चुनें</h3>
+        <div class="crop-selector">
+            <div class="crop-option" onclick="selectCrop(this, 'गेहूँ')">गेहूँ</div>
+            <div class="crop-option" onclick="selectCrop(this, 'सोयाबीन')">सोयाबीन</div>
+            <div class="crop-option" onclick="selectCrop(this, 'कपास')">कपास</div>
+            <div class="crop-option" onclick="selectCrop(this, 'चना')">चना</div>
+            <div class="crop-option" onclick="selectCrop(this, 'मक्का')">मक्का</div>
+            <div class="crop-option" onclick="selectCrop(this, 'अरहर')">अरहर</div>
+            <div class="crop-option" onclick="selectCrop(this, 'प्याज')">प्याज</div>
+            <div class="crop-option" onclick="selectCrop(this, 'लहसुन')">लहसुन</div>
+            <div class="crop-option" onclick="selectCrop(this, 'टमाटर')">टमाटर</div>
+            <div class="crop-option" onclick="selectCrop(this, 'मिर्च')">मिर्च</div>
+            <div class="crop-option" onclick="selectCrop(this, 'धान')">धान</div>
+            <div class="crop-option" onclick="selectCrop(this, 'सरसों')">सरसों</div>
+            <div class="crop-option" onclick="selectCrop(this, 'आलू')">आलू</div>
+            <div class="crop-option" onclick="selectCrop(this, 'मूंगफली')">मूंगफली</div>
+            <div class="crop-option" onclick="selectCrop(this, 'गन्ना')">गन्ना</div>
+            <div class="crop-option" onclick="selectCrop(this, 'हल्दी')">हल्दी</div>
+        </div>
+
+        <div class="upload-area" onclick="document.getElementById('imageUpload').click()">
+            <div class="upload-icon">📸</div>
+            <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">तस्वीर अपलोड करें</div>
+            <div style="font-size: 14px; color: var(--text-light);">क्लिक करके फोटो लें</div>
+        </div>
+        <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="analyzeImage()">
+
+        <div id="resultsArea"></div>
+
+        <button class="btn btn-primary" onclick="analyzeImage()">विश्लेषण शुरू करें</button>
+    </div>
+
+    <!-- Market Screen -->
+    <div class="screen" id="marketScreen">
+        <div class="live-indicator">
+            <div class="pulse"></div>
+            <div>लाइव अपडेट - हर 15 मिनट में</div>
+        </div>
+
+        <h3 class="mb-16">आज के मंडी भाव</h3>
+
+        <div class="price-item">
+            <div>
+                <div class="price-crop">गेहूँ</div>
+                <div class="price-mandi">Harda मंडी</div>
+            </div>
+            <div class="price-value">
+                <div class="price-amount">₹2,150/क्विंटल</div>
+                <div class="price-trend trend-up">↗ +₹50 (आज)</div>
+            </div>
+        </div>
+
+        <div class="price-item">
+            <div>
+                <div class="price-crop">सोयाबीन</div>
+                <div class="price-mandi">Indore मंडी</div>
+            </div>
+            <div class="price-value">
+                <div class="price-amount">₹5,200/क्विंटल</div>
+                <div class="price-trend trend-up">↗ +₹100</div>
+            </div>
+        </div>
+
+        <div class="price-item">
+            <div>
+                <div class="price-crop">कपास</div>
+                <div class="price-mandi">Bhopal मंडी</div>
+            </div>
+            <div class="price-value">
+                <div class="price-amount">₹5,500/क्विंटल</div>
+                <div class="price-trend trend-down">↘ -₹80</div>
+            </div>
+        </div>
+
+        <div class="price-item">
+            <div>
+                <div class="price-crop">चना</div>
+                <div class="price-mandi">Dewas मंडी</div>
+            </div>
+            <div class="price-value">
+                <div class="price-amount">₹4,800/क्विंटल</div>
+                <div class="price-trend trend-up">↗ +₹120</div>
+            </div>
+        </div>
+
+        <div class="price-item">
+            <div>
+                <div class="price-crop">प्याज</div>
+                <div class="price-mandi">Harda मंडी</div>
+            </div>
+            <div class="price-value">
+                <div class="price-amount">₹1,800/क्विंटल</div>
+                <div class="price-trend trend-down">↘ -₹50</div>
+            </div>
+        </div>
+
+        <div class="price-item">
+            <div>
+                <div class="price-crop">धान</div>
+                <div class="price-mandi">Sehore मंडी</div>
+            </div>
+            <div class="price-value">
+                <div class="price-amount">₹1,960/क्विंटल</div>
+                <div class="price-trend trend-up">↗ +₹30</div>
+            </div>
+        </div>
+
+        <div class="price-item">
+            <div>
+                <div class="price-crop">सरसों</div>
+                <div class="price-mandi">Raisen मंडी</div>
+            </div>
+            <div class="price-value">
+                <div class="price-amount">₹5,400/क्विंटल</div>
+                <div class="price-trend trend-up">↗ +₹70</div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>⚠️ सूचना:</strong> ये दरें इंटरनेट से ली गई हैं और केवल जानकारी के लिए हैं। हम इनकी सटीकता की गारंटी नहीं देते। कृपया बेचने से पहले अपनी स्थानीय मंडी से पुष्टि करें।
+        </div>
+    </div>
+
+    <!-- Schemes Screen -->
+    <div class="screen" id="schemesScreen">
+        <h3 class="mb-20">सरकारी योजनाएं</h3>
+
+        <div class="scheme-card">
+            <div class="scheme-title">प्रधानमंत्री किसान सम्मान निधि (PM-KISAN)</div>
+            <div class="scheme-desc">सभी भूमिधारक किसान परिवारों को ₹6,000 प्रति वर्ष की आर्थिक सहायता। तीन किस्तों में ₹2,000-2,000 सीधे बैंक खाते में।</div>
+            <a href="https://pmkisan.gov.in/" target="_blank" class="scheme-btn">अभी आवेदन करें →</a>
+        </div>
+
+        <div class="scheme-card" style="border-left-color: #2196f3;">
+            <div class="scheme-title">प्रधानमंत्री फसल बीमा योजना (PMFBY)</div>
+            <div class="scheme-desc">प्राकृतिक आपदाओं से फसल नुकसान पर बीमा कवर। किसान बहुत कम प्रीमियम देते हैं, बाकी सरकार देती है।</div>
+            <a href="https://pmfby.gov.in/" target="_blank" class="scheme-btn">अभी आवेदन करें →</a>
+        </div>
+
+        <div class="scheme-card" style="border-left-color: #4caf50;">
+            <div class="scheme-title">सॉइल हेल्थ कार्ड योजना</div>
+            <div class="scheme-desc">मुफ्त मिट्टी जांच और सॉइल हेल्थ कार्ड। जानें कि आपकी मिट्टी में कौन से पोषक तत्व कम हैं और क्या डालें।</div>
+            <a href="https://soilhealth.dac.gov.in/" target="_blank" class="scheme-btn">अभी आवेदन करें →</a>
+        </div>
+
+        <div class="scheme-card" style="border-left-color: #9c27b0;">
+            <div class="scheme-title">पीएम कुसुम योजना</div>
+            <div class="scheme-desc">सोलर पंप पर 90% तक सब्सिडी। बिजली की बचत और खेती के खर्च में कमी।</div>
+            <a href="https://pmkusum.mnre.gov.in/" target="_blank" class="scheme-btn">जानकारी लें →</a>
+        </div>
+
+        <div class="scheme-card" style="border-left-color: #ff5722;">
+            <div class="scheme-title">किसान क्रेडिट कार्ड (KCC)</div>
+            <div class="scheme-desc">कम ब्याज दर पर 3 लाख तक का कृषि ऋण। बीज, खाद, और अन्य खेती के खर्चों के लिए।</div>
+            <a href="https://www.india.gov.in/spotlight/kisan-credit-card-kcc-scheme" target="_blank" class="scheme-btn">जानकारी लें →</a>
+        </div>
+    </div>
+
+    <!-- Community Screen -->
+    <div class="screen" id="communityScreen">
+        <div class="post-input-area">
+            <textarea class="post-input" id="postText" placeholder="अपनी खेती का अनुभव साझा करें..." rows="3"></textarea>
+            <div class="post-actions">
+                <button class="btn btn-primary" onclick="createPost()">पोस्ट करें</button>
+            </div>
+        </div>
+
+        <div id="postsContainer">
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar">रा</div>
+                    <div>
+                        <div class="post-author">राज कुमार</div>
+                        <div class="post-meta">Timarni • 2 घंटे पहले</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    इस बार गेहूँ की फसल बहुत अच्छी हुई! सोयाबीन के साथ फसल चक्र बदलने से अच्छा फायदा मिला। आप सभी को भी सलाह दूंगा कि फसल चक्र जरूर अपनाएं।
+                </div>
+                <div class="post-actions-bar">
+                    <button class="action-btn" onclick="toggleLike(this)">
+                        ❤️ <span>24</span>
+                    </button>
+                    <button class="action-btn">
+                        💬 <span>8</span>
+                    </button>
+                    <button class="action-btn">
+                        🔄 <span>3</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar">मो</div>
+                    <div>
+                        <div class="post-author">मोहन सिंह</div>
+                        <div class="post-meta">Harda • 5 घंटे पहले</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    PM-KISAN की 16वीं किस्त आ गई! अगर किसी को नहीं मिली तो अपना eKYC चेक करें। मुझे इस ऐप से जानकारी मिली और जल्दी मिल गई किस्त। धन्यवाद! 🙏
+                </div>
+                <div class="post-actions-bar">
+                    <button class="action-btn liked">
+                        ❤️ <span>42</span>
+                    </button>
+                    <button class="action-btn">
+                        💬 <span>15</span>
+                    </button>
+                    <button class="action-btn">
+                        🔄 <span>8</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar">सु</div>
+                    <div>
+                        <div class="post-author">सुरेश पटेल</div>
+                        <div class="post-meta">Khirkiya • 1 दिन पहले</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    सोयाबीन में पीला मोज़ेक वायरस की समस्या आ रही है। इस ऐप के AI ने बताया और सही इलाज भी दिया। 5 दिन में फर्क दिख रहा है। बहुत अच्छा ऐप है! 👍
+                </div>
+                <div class="post-actions-bar">
+                    <button class="action-btn">
+                        ❤️ <span>56</span>
+                    </button>
+                    <button class="action-btn">
+                        💬 <span>22</span>
+                    </button>
+                    <button class="action-btn">
+                        🔄 <span>12</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Screen -->
+    <div class="screen" id="profileScreen">
+        <div class="profile-section">
+            <h3 class="section-title">व्यक्तिगत जानकारी</h3>
+            <div class="form-group">
+                <label>नाम</label>
+                <input type="text" id="profileName" value="किसान">
+            </div>
+            <div class="form-group">
+                <label>मोबाइल नंबर</label>
+                <input type="tel" id="profileMobile" value="9876543210">
+            </div>
+            <div class="form-group">
+                <label>गाँव</label>
+                <input type="text" id="profileVillage" value="Harda">
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h3 class="section-title">खेत की जानकारी</h3>
+            <div class="form-group">
+                <label>खेत का आकार</label>
+                <input type="text" id="farmSize" placeholder="उदा: 5 एकड़">
+            </div>
+            <div class="form-group">
+                <label>साल में कितनी फसलें उगाते हैं?</label>
+                <input type="number" id="cropsPerYear" placeholder="उदा: 2">
+            </div>
+            <div class="form-group">
+                <label>मौजूदा सीजन की फसलें</label>
+                <input type="text" id="currentCrops" placeholder="उदा: गेहूँ, चना">
+            </div>
+            <div class="form-group">
+                <label>हर फसल का क्षेत्र</label>
+                <textarea id="cropAreas" rows="3" placeholder="उदा: गेहूँ - 3 एकड़, चना - 2 एकड़"></textarea>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="isOrganic">
+                <label for="isOrganic">जैविक खेती करते हैं?</label>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h3 class="section-title">उपयोग की जाने वाली कीटनाशक</h3>
+            <div class="chip-container" id="pesticidesContainer">
+                <div class="chip">
+                    Chlorpyrifos
+                    <button class="chip-remove" onclick="removeChip(this)">×</button>
+                </div>
+            </div>
+            <div class="add-chip-input">
+                <input type="text" id="newPesticide" placeholder="कीटनाशक का नाम">
+                <button class="btn btn-primary btn-small" onclick="addPesticide()">जोड़ें</button>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h3 class="section-title">उपयोग की जाने वाली खाद</h3>
+            <div class="chip-container" id="fertilizersContainer">
+                <div class="chip">
+                    यूरिया
+                    <button class="chip-remove" onclick="removeChip(this)">×</button>
+                </div>
+                <div class="chip">
+                    DAP
+                    <button class="chip-remove" onclick="removeChip(this)">×</button>
+                </div>
+            </div>
+            <div class="add-chip-input">
+                <input type="text" id="newFertilizer" placeholder="खाद का नाम">
+                <button class="btn btn-primary btn-small" onclick="addFertilizer()">जोड़ें</button>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveProfile()">प्रोफाइल सेव करें</button>
+        <button class="btn" style="background: var(--danger); color: white; margin-top: 12px;" onclick="logout()">लॉगआउट</button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="showScreen('dashboardScreen')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">होम</div>
+        </button>
+        <button class="nav-item" onclick="showScreen('weatherScreen')">
+            <div class="nav-icon">🌤️</div>
+            <div class="nav-label">मौसम</div>
+        </button>
+        <button class="nav-item" onclick="showScreen('diseaseScreen')">
+            <div class="nav-icon">🔬</div>
+            <div class="nav-label">स्कैन</div>
+        </button>
+        <button class="nav-item" onclick="showScreen('communityScreen')">
+            <div class="nav-icon">👥</div>
+            <div class="nav-label">समुदाय</div>
+        </button>
+        <button class="nav-item" onclick="showScreen('profileScreen')">
+            <div class="nav-icon">👨‍🌾</div>
+            <div class="nav-label">प्रोफाइल</div>
+        </button>
+    </div>
+
+    <!-- Notification Modal -->
+    <div class="modal" id="notificationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">सूचनाएं</div>
+                <button class="close-btn" onclick="closeModal('notificationModal')">×</button>
+            </div>
+            <div id="notificationList">
+                <div class="post" style="margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 600;">🌧️ बारिश की चेतावनी</div>
+                            <div style="font-size: 14px; color: var(--text-light); margin-top: 4px;">कल 80% बारिश की संभावना</div>
+                        </div>
+                        <button class="close-btn" style="font-size: 20px;" onclick="removeNotification(this)">×</button>
+                    </div>
+                </div>
+                <div class="post" style="margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 600;">📊 मंडी भाव बढ़ा</div>
+                            <div style="font-size: 14px; color: var(--text-light); margin-top: 4px;">गेहूँ की कीमत ₹50 बढ़ी</div>
+                        </div>
+                        <button class="close-btn" style="font-size: 20px;" onclick="removeNotification(this)">×</button>
+                    </div>
+                </div>
+                <div class="post" style="margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 600;">🏛️ नई योजना</div>
+                            <div style="font-size: 14px; color: var(--text-light); margin-top: 4px;">PM कुसुम योजना के लिए आवेदन शुरू</div>
+                        </div>
+                        <button class="close-btn" style="font-size: 20px;" onclick="removeNotification(this)">×</button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 16px;" onclick="clearAllNotifications()">सभी हटाएं</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let currentLang = 'hi';
+        let selectedCrop = null;
+        let detectionType = 'disease';
+
+        // Check saved user on load
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('agrosakhaUser');
+            if (saved) {
+                currentUser = JSON.parse(saved);
+                showDashboard();
+            }
+
+            // Check online/offline
+            updateOnlineStatus();
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+        });
+
+        function updateOnlineStatus() {
+            const banner = document.getElementById('offlineBanner');
+            if (!navigator.onLine) {
+                banner.classList.add('show');
+            } else {
+                banner.classList.remove('show');
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('signupForm').style.display = 'none';
+        }
+
+        function showSignup() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+        }
+
+        function login() {
+            const mobile = document.getElementById('loginMobile').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!mobile || !password) {
+                alert('कृपया सभी फील्ड भरें');
+                return;
+            }
+
+            const saved = localStorage.getItem('agrosakhaUser');
+            if (!saved) {
+                alert('खाता नहीं मिला। पहले साइन अप करें।');
+                return;
+            }
+
+            const user = JSON.parse(saved);
+            if (user.mobile === mobile && user.password === password) {
+                currentUser = user;
+                showDashboard();
+            } else {
+                alert('गलत मोबाइल नंबर या पासवर्ड');
+            }
+        }
+
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const village = document.getElementById('signupVillage').value;
+            const mobile = document.getElementById('signupMobile').value;
+            const password = document.getElementById('signupPassword').value;
+
+            if (!name || !village || !mobile || !password) {
+                alert('कृपया सभी फील्ड भरें');
+                return;
+            }
+
+            if (mobile.length !== 10) {
+                alert('कृपया सही 10 अंकों का मोबाइल नंबर डालें');
+                return;
+            }
+
+            currentUser = { name, village, mobile, password };
+            localStorage.setItem('agrosakhaUser', JSON.stringify(currentUser));
+            showDashboard();
+        }
+
+        function showDashboard() {
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('dashboardScreen').classList.add('active');
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('profileName').value = currentUser.name;
+            document.getElementById('profileMobile').value = currentUser.mobile;
+            document.getElementById('profileVillage').value = currentUser.village;
+        }
+
+        function logout() {
+            if (confirm('क्या आप लॉगआउट करना चाहते हैं?')) {
+                currentUser = null;
+                localStorage.removeItem('agrosakhaUser');
+                location.reload();
+            }
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const navMap = {
+                'dashboardScreen': 0,
+                'weatherScreen': 1,
+                'diseaseScreen': 2,
+                'communityScreen': 3,
+                'profileScreen': 4
+            };
+            const index = navMap[screenId];
+            if (index !== undefined) {
+                document.querySelectorAll('.nav-item')[index].classList.add('active');
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'hi' ? 'en' : 'hi';
+            document.getElementById('langBtn').textContent = currentLang === 'hi' ? 'EN' : 'HI';
+        }
+
+        function openNotifications() {
+            document.getElementById('notificationModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function removeNotification(btn) {
+            btn.closest('.post').remove();
+            updateNotificationBadge();
+        }
+
+        function clearAllNotifications() {
+            document.getElementById('notificationList').innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 20px;">कोई सूचना नहीं</p>';
+            document.getElementById('notifBadge').style.display = 'none';
+        }
+
+        function updateNotificationBadge() {
+            const count = document.querySelectorAll('#notificationList .post').length;
+            const badge = document.getElementById('notifBadge');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function selectDetectionType(type) {
+            detectionType = type;
+            document.querySelectorAll('.type-option').forEach(el => el.classList.remove('selected'));
+            event.target.closest('.type-option').classList.add('selected');
+        }
+
+        function selectCrop(element, crop) {
+            document.querySelectorAll('.crop-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedCrop = crop;
+        }
+
+        function analyzeImage() {
+            if (!selectedCrop) {
+                alert('कृपया पहले फसल चुनें');
+                return;
+            }
+
+            const resultsArea = document.getElementById('resultsArea');
+            
+            if (detectionType === 'disease') {
+                resultsArea.innerHTML = `
+                    <h3 style="margin: 20px 0 16px;">विश्लेषण परिणाम (${selectedCrop})</h3>
+                    <div class="result-card danger">
+                        <div class="result-header">
+                            <div class="result-name">पत्ती का जंग रोग</div>
+                            <div class="confidence">94%</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 94%; background: linear-gradient(90deg, #f44336, #ff5722);"></div>
+                        </div>
+                        <div class="treatment">
+                            <strong>गंभीरता:</strong> 🔴 उच्च - तुरंत उपचार जरूरी<br>
+                            <strong>उपचार:</strong> प्रोपिकोनाज़ोल 25% EC @ 1 ml प्रति लीटर पानी में मिलाकर स्प्रे करें।<br>
+                            <strong>समय:</strong> सुबह या शाम, 7-10 दिन बाद दोहराएं।
+                        </div>
+                    </div>
+                    <div class="result-card warning">
+                        <div class="result-header">
+                            <div class="result-name">एफिड कीट</div>
+                            <div class="confidence">87%</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 87%; background: linear-gradient(90deg, #ff9800, #ffc107);"></div>
+                        </div>
+                        <div class="treatment">
+                            <strong>गंभीरता:</strong> 🟡 मध्यम - निगरानी रखें<br>
+                            <strong>उपचार:</strong> इमिडाक्लोप्रिड 17.8% SL @ 0.5 ml प्रति लीटर या नीम का तेल 5 ml प्रति लीटर स्प्रे करें।
+                        </div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-header">
+                            <div class="result-name">नाइट्रोजन की कमी</div>
+                            <div class="confidence">76%</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 76%;"></div>
+                        </div>
+                        <div class="treatment">
+                            <strong>गंभीरता:</strong> 🟢 कम - सामान्य उपचार<br>
+                            <strong>उपचार:</strong> यूरिया 10 kg प्रति एकड़ डालें या DAP का छिड़काव करें। पानी के साथ दें।
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultsArea.innerHTML = `
+                    <h3 style="margin: 20px 0 16px;">कीट विश्लेषण (${selectedCrop})</h3>
+                    <div class="result-card danger">
+                        <div class="result-header">
+                            <div class="result-name">तना छेदक कीट (Stem Borer)</div>
+                            <div class="confidence">92%</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 92%; background: linear-gradient(90deg, #f44336, #ff5722);"></div>
+                        </div>
+                        <div class="treatment">
+                            <strong>गंभीरता:</strong> 🔴 उच्च - फसल को नुकसान<br>
+                            <strong>उपचार:</strong> क्लोरपायरीफॉस 20% EC @ 2 ml प्रति लीटर या कार्टैप हाइड्रोक्लोराइड 50% SP @ 1 gm प्रति लीटर स्प्रे करें।
+                        </div>
+                    </div>
+                    <div class="result-card warning">
+                        <div class="result-header">
+                            <div class="result-name">सफेद मक्खी (Whitefly)</div>
+                            <div class="confidence">85%</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%; background: linear-gradient(90deg, #ff9800, #ffc107);"></div>
+                        </div>
+                        <div class="treatment">
+                            <strong>गंभीरता:</strong> 🟡 मध्यम<br>
+                            <strong>उपचार:</strong> थायामेथोक्साम 25% WG @ 0.2 gm प्रति लीटर या नीम का तेल 3% स्प्रे करें। पीले चिपचिपे ट्रैप लगाएं।
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function createPost() {
+            const text = document.getElementById('postText').value.trim();
+            if (!text) {
+                alert('कृपया कुछ लिखें');
+                return;
+            }
+
+            const container = document.getElementById('postsContainer');
+            const post = document.createElement('div');
+            post.className = 'post';
+            post.innerHTML = `
+                <div class="post-header">
+                    <div class="avatar">${currentUser.name.charAt(0)}</div>
+                    <div>
+                        <div class="post-author">${currentUser.name}</div>
+                        <div class="post-meta">${currentUser.village} • अभी</div>
+                    </div>
+                </div>
+                <div class="post-content">${text}</div>
+                <div class="post-actions-bar">
+                    <button class="action-btn" onclick="toggleLike(this)">
+                        ❤️ <span>0</span>
+                    </button>
+                    <button class="action-btn">
+                        💬 <span>0</span>
+                    </button>
+                    <button class="action-btn">
+                        🔄 <span>0</span>
+                    </button>
+                </div>
+            `;
+            container.insertBefore(post, container.firstChild);
+            document.getElementById('postText').value = '';
+        }
+
+        function toggleLike(btn) {
+            btn.classList.toggle('liked');
+            const count = parseInt(btn.querySelector('span').textContent);
+            btn.querySelector('span').textContent = btn.classList.contains('liked') ? count + 1 : count - 1;
+        }
+
+        function saveProfile() {
+            currentUser.name = document.getElementById('profileName').value;
+            currentUser.mobile = document.getElementById('profileMobile').value;
+            currentUser.village = document.getElementById('profileVillage').value;
+            
+            const farmData = {
+                size: document.getElementById('farmSize').value,
+                cropsPerYear: document.getElementById('cropsPerYear').value,
+                currentCrops: document.getElementById('currentCrops').value,
+                cropAreas: document.getElementById('cropAreas').value,
+                isOrganic: document.getElementById('isOrganic').checked
+            };
+            
+            currentUser.farmData = farmData;
+            localStorage.setItem('agrosakhaUser', JSON.stringify(currentUser));
+            document.getElementById('userName').textContent = currentUser.name;
+            alert('प्रोफाइल सेव हो गई! ✅');
+        }
+
+        function addPesticide() {
+            const input = document.getElementById('newPesticide');
+            const value = input.value.trim();
+            if (!value) return;
+            
+            const container = document.getElementById('pesticidesContainer');
+            const chip = document.createElement('div');
+            chip.className = 'chip';
+            chip.innerHTML = `
+                ${value}
+                <button class="chip-remove" onclick="removeChip(this)">×</button>
+            `;
+            container.appendChild(chip);
+            input.value = '';
+        }
+
+        function addFertilizer() {
+            const input = document.getElementById('newFertilizer');
+            const value = input.value.trim();
+            if (!value) return;
+            
+            const container = document.getElementById('fertilizersContainer');
+            const chip = document.createElement('div');
+            chip.className = 'chip';
+            chip.innerHTML = `
+                ${value}
+                <button class="chip-remove" onclick="removeChip(this)">×</button>
+            `;
+            container.appendChild(chip);
+            input.value = '';
+        }
+
+        function removeChip(btn) {
+            btn.parentElement.remove();
+        }
+
+        // Close modal on background click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
